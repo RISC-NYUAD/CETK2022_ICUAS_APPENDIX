@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 10 11:19:48 2021
-
-@author: dc4204
+Created by Dimitris Chaikalis
 """
 
 import numpy as np
