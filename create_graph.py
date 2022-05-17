@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created by Dimitris Chaikalis
+Created on Tue Aug 10 11:19:48 2021
+
+@author: dc4204
 """
 
 import numpy as np
@@ -12,6 +14,8 @@ Edge_List = []
 rot_table = []
 hex_num = 0
 sq_num = 0
+f_l = 0
+f_l_num = -1
 
 def fixed_rotation(start,INIT,c):
     prefix = math.pi
@@ -19,12 +23,16 @@ def fixed_rotation(start,INIT,c):
         if(INIT==-1):
             INIT = 3
             prefix = 0
+        if(c==6):# 6 reserved for elevated agents            
+            c = 3
         angle = (INIT-c)*(math.pi/3) + prefix 
     if(start=='s'):
         if(INIT==-1):
             INIT = 2
             prefix = 0
-        angle = (INIT-c)*(math.pi/2) + prefix
+        if(c==6):
+            c = 2
+        angle = (INIT-c)*(math.pi/2) + prefix        
     return angle
 
 def process(word, start):
@@ -33,6 +41,8 @@ def process(word, start):
     global Node_List
     global Edge_List
     global rot_table
+    global f_l
+    global f_l_num
     
     l = 0.14
     
@@ -69,8 +79,14 @@ def process(word, start):
                 if(L!=-1):
                     n_L = str(L)+"_"+n_st
                     Node_List.append(n_L)
-                    Edge_List.append([n_st,n_L,l])
+                    if(L!=6):
+                        Edge_List.append([n_st,n_L,[l,0,0]])
+                    else:
+                        Edge_List.append([n_st,n_L,[0,0,0.06]])
                     rot_table.append([n_st,n_L,PHI])
+                    if(f_l == 0):
+                        f_l = 1
+                        f_l_num = PHI
                 if(c.isdigit()):
                     L = int(c)
                     PHI = fixed_rotation(start,INIT,L)
@@ -84,7 +100,10 @@ def process(word, start):
                     local_num = sq_num
                 n_C = c + "_" + str(local_num)
                 d = process(word[count::],c)
-                Edge_List.append([n_st,n_C,l])
+                if(L!=6):
+                    Edge_List.append([n_st,n_C,[l,0,0]])
+                else:
+                    Edge_List.append([n_st,n_C,[0,0,0.06]])
                 rot_table.append([n_st,n_C,fixed_rotation(start,INIT,L)])
                 L = -1
             
@@ -93,7 +112,7 @@ def process(word, start):
                 
 if __name__== "__main__" :
 
-    Lexis = "h]0s203)1234)"
+    Lexis = "h]10s2036)234)"
 #    Lexis = "s]123s10s23)))"
     c = Lexis[0]
     Lexis = Lexis[1::]
